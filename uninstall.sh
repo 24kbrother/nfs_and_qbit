@@ -4,30 +4,18 @@
 
 set -e
 
-# 默认配置
-DEFAULT_INSTALL_DIR="/root/nfs_and_qbit"
-DEFAULT_SERVICE_NAME="nfs-qbit"
+# 固定配置
+INSTALL_DIR="/root/nfs_and_qbit"
+SERVICE_NAME="nfs-qbit"
 
 echo "========================================"
 echo "NFS挂载和qBittorrent自动启动卸载脚本"
 echo "========================================"
 echo ""
 
-# 获取用户输入
-echo "请输入安装目录 (直接回车使用默认值):"
-echo "默认值: $DEFAULT_INSTALL_DIR"
-read -p "安装目录: " input_dir
-INSTALL_DIR=${input_dir:-$DEFAULT_INSTALL_DIR}
-
-echo "请输入服务名称 (直接回车使用默认值):"
-echo "默认值: $DEFAULT_SERVICE_NAME"
-read -p "服务名称: " input_service
-SERVICE_NAME=${input_service:-$DEFAULT_SERVICE_NAME}
-
-echo ""
 echo "卸载信息:"
-echo "安装目录: $INSTALL_DIR"
-echo "服务名称: $SERVICE_NAME"
+echo "安装目录: $INSTALL_DIR (固定)"
+echo "服务名称: $SERVICE_NAME (固定)"
 echo ""
 
 # 确认卸载

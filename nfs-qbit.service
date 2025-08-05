@@ -4,9 +4,8 @@ After=network.target docker.service
 Wants=docker.service
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=/root/start-nfs-and-qbit.sh
-RemainAfterExit=yes
 StandardOutput=journal
 StandardError=journal
 User=root

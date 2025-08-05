@@ -9,7 +9,7 @@ if [ -z "$BASH_VERSION" ]; then
     exec bash "$0" "$@"
 fi
 
-# 默认配置
+# 固定配置
 GITHUB_REPO="24kbrother/nfs_and_qbit"
 GITHUB_BRANCH="main"
 INSTALL_DIR="/root/nfs_and_qbit"
@@ -20,21 +20,39 @@ echo "NFS挂载和qBittorrent自动启动安装脚本"
 echo "========================================"
 echo ""
 
-# 使用固定的GitHub仓库地址
-echo "GitHub仓库: $GITHUB_REPO (固定地址)"
+# 检查依赖
+echo "检查系统依赖..."
+if ! command -v git >/dev/null 2>&1; then
+    echo "错误: 未找到git命令"
+    echo "请安装git: apt-get install git 或 yum install git"
+    exit 1
+fi
 
-echo "请输入安装目录 (直接回车使用默认值):"
-echo "默认值: $INSTALL_DIR"
-read -p "安装目录: " input_dir
-INSTALL_DIR=${input_dir:-$INSTALL_DIR}
+if ! command -v docker >/dev/null 2>&1; then
+    echo "警告: 未找到docker命令，qBittorrent功能可能无法正常工作"
+fi
 
-echo "请输入服务名称 (直接回车使用默认值):"
-echo "默认值: $SERVICE_NAME"
-read -p "服务名称: " input_service
-SERVICE_NAME=${input_service:-$SERVICE_NAME}
+# 第一步：先下载脚本
+echo "第一步：从GitHub下载脚本..."
+echo "GitHub仓库: $GITHUB_REPO"
 
-# 强制要求用户输入NFS配置
+# 创建临时目录
+TEMP_DIR=$(mktemp -d)
+cd "$TEMP_DIR"
+
+# 下载文件
+echo "正在下载脚本文件..."
+git clone --depth 1 --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" repo
+if [ $? -ne 0 ]; then
+    echo "错误: 无法从GitHub下载脚本，请检查网络连接"
+    exit 1
+fi
+
+echo "脚本下载成功！"
 echo ""
+
+# 第二步：获取用户配置
+echo "第二步：配置NFS设置"
 echo "=== NFS配置 ==="
 
 echo "请输入NFS服务器IP地址 (必填):"
@@ -71,8 +89,8 @@ qbit_container=${qbit_container:-"qbittorrent"}
 echo ""
 echo "配置信息:"
 echo "GitHub仓库: $GITHUB_REPO (固定)"
-echo "安装目录: $INSTALL_DIR"
-echo "服务名称: $SERVICE_NAME"
+echo "安装目录: $INSTALL_DIR (固定)"
+echo "服务名称: $SERVICE_NAME (固定)"
 echo "NFS服务器: $nfs_server"
 echo "NFS路径: $nfs_path"
 echo "挂载点: $mount_point"
@@ -85,48 +103,29 @@ echo "确认安装? (y/N):"
 read -p "" confirm
 if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
     echo "安装已取消"
+    cd /
+    rm -rf "$TEMP_DIR"
     exit 1
 fi
 
 echo ""
-echo "开始安装..."
-
-# 检查依赖
-echo "检查系统依赖..."
-if ! command -v git >/dev/null 2>&1; then
-    echo "错误: 未找到git命令"
-    echo "请安装git: apt-get install git 或 yum install git"
-    exit 1
-fi
-
-if ! command -v docker >/dev/null 2>&1; then
-    echo "警告: 未找到docker命令，qBittorrent功能可能无法正常工作"
-fi
+echo "第三步：开始安装..."
 
 # 创建安装目录
 echo "创建安装目录..."
 mkdir -p "$INSTALL_DIR"
-cd "$INSTALL_DIR"
 
-# 下载文件
-echo "从GitHub下载文件..."
-if [ -d "temp_download" ]; then
-    rm -rf temp_download
-fi
-
-# 使用git clone下载
-echo "使用git下载..."
-git clone --depth 1 --branch "$GITHUB_BRANCH" "https://github.com/$GITHUB_REPO.git" temp_download
-cp -r temp_download/* .
-rm -rf temp_download
+# 复制脚本文件
+echo "复制脚本文件..."
+cp -r repo/* "$INSTALL_DIR/"
 
 # 设置执行权限
 echo "设置脚本执行权限..."
-chmod +x *.sh
+chmod +x "$INSTALL_DIR"/*.sh
 
 # 修改配置文件
 echo "配置NFS和qBittorrent设置..."
-cat > "config.sh" << EOF
+cat > "$INSTALL_DIR/config.sh" << EOF
 #!/bin/bash
 
 # NFS挂载和qBittorrent配置文件
@@ -214,7 +213,7 @@ EOF
 
 # 修改脚本中的路径
 echo "配置脚本路径..."
-sed -i "s|SCRIPT_DIR=\"/root/nfs_and_qbit\"|SCRIPT_DIR=\"$INSTALL_DIR\"|g" start-nfs-and-qbit.sh
+sed -i "s|SCRIPT_DIR=\"/root/nfs_and_qbit\"|SCRIPT_DIR=\"$INSTALL_DIR\"|g" "$INSTALL_DIR/start-nfs-and-qbit.sh"
 
 # 创建systemd服务文件
 echo "创建systemd服务文件..."
@@ -225,9 +224,8 @@ After=network.target docker.service
 Wants=docker.service
 
 [Service]
-Type=oneshot
+Type=simple
 ExecStart=$INSTALL_DIR/start-nfs-and-qbit.sh
-RemainAfterExit=yes
 StandardOutput=journal
 StandardError=journal
 User=root
@@ -249,12 +247,16 @@ systemctl daemon-reload
 echo "启用服务..."
 systemctl enable "${SERVICE_NAME}.service"
 
+# 清理临时目录
+cd /
+rm -rf "$TEMP_DIR"
+
 echo ""
 echo "安装完成！"
 echo ""
 echo "服务信息:"
-echo "安装目录: $INSTALL_DIR"
-echo "服务名称: $SERVICE_NAME"
+echo "安装目录: $INSTALL_DIR (固定)"
+echo "服务名称: $SERVICE_NAME (固定)"
 echo "NFS服务器: $nfs_server"
 echo "NFS路径: $nfs_path"
 echo "挂载点: $mount_point"

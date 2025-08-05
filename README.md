@@ -43,20 +43,24 @@ bash install.sh
 - **验证文件夹** (可选): 默认 Movies
 - **qBittorrent容器名** (可选): 默认 qbittorrent
 
-**注意**: GitHub仓库地址已固定为 `24kbrother/nfs_and_qbit`，无需用户输入
+**固定配置**:
+- GitHub仓库地址: `24kbrother/nfs_and_qbit`
+- 安装目录: `/root/nfs_and_qbit`
+- 服务名称: `nfs-qbit`
 
 ### 自定义配置
 
 安装过程中会提示您输入：
-- 安装目录 (可选)
-- 服务名称 (可选)
 - **NFS服务器IP地址** (必填)
 - **NFS服务器路径** (必填)
 - 本地挂载点 (可选)
 - 验证文件夹 (可选)
 - qBittorrent容器名 (可选)
 
-**注意**: GitHub仓库地址已固定，无需输入
+**安装流程**:
+1. 先下载脚本文件（网络检查）
+2. 配置NFS设置
+3. 部署到固定目录
 
 ## 使用方法
 
