@@ -17,7 +17,7 @@
 
 ```bash
 # 下载安装脚本
-curl -fsSL https://github.com/24kbrother/nfs_and_qbit/blob/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/24kbrother/nfs_and_qbit/main/install.sh | bash
 ```
 
 ### 手动安装
@@ -25,7 +25,7 @@ curl -fsSL https://github.com/24kbrother/nfs_and_qbit/blob/main/install.sh | bas
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/24kbrother/nfs_and_qbit.git
-cd /tmp/nfs_and_qbit
+cd nfs_and_qbit
 
 # 2. 运行安装脚本
 bash install.sh
