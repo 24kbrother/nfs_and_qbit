@@ -30,7 +30,16 @@ run_in_background() {
                 
                 if [ $QBIT_EXIT_CODE -eq 0 ]; then
                     echo "$(date): 所有服务启动成功！"
-                    exit 0
+                    # 保持NFS挂载运行
+                    echo "$(date): 保持NFS挂载运行..."
+                    while true; do
+                        sleep 30
+                        # 检查挂载是否还在
+                        if ! mountpoint -q "$MOUNT_POINT"; then
+                            echo "$(date): 检测到NFS挂载丢失，重新挂载..."
+                            bash "$NFS_SCRIPT"
+                        fi
+                    done
                 else
                     echo "$(date): qBittorrent启动失败，退出码: $QBIT_EXIT_CODE"
                     exit $QBIT_EXIT_CODE
