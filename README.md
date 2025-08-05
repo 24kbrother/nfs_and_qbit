@@ -13,22 +13,24 @@
 
 ## 快速安装
 
-### 一键安装
+### 推荐安装方法
 
 ```bash
-# 下载安装脚本
-curl -fsSL https://raw.githubusercontent.com/24kbrother/nfs_and_qbit/main/install.sh | bash
-```
+# 方法1: 下载到本地再执行（推荐）
+wget https://raw.githubusercontent.com/24kbrother/nfs_and_qbit/main/install.sh
+bash install.sh
 
-### 手动安装
-
-```bash
-# 1. 克隆仓库
+# 方法2: 克隆仓库
 git clone https://github.com/24kbrother/nfs_and_qbit.git
 cd nfs_and_qbit
-
-# 2. 运行安装脚本
 bash install.sh
+```
+
+### 一键安装（可能有问题）
+
+```bash
+# 注意：通过管道执行可能无法正常输入
+curl -fsSL https://raw.githubusercontent.com/24kbrother/nfs_and_qbit/main/install.sh | bash
 ```
 
 ## 配置说明

@@ -9,6 +9,37 @@ if [ -z "$BASH_VERSION" ]; then
     exec bash "$0" "$@"
 fi
 
+# 检查是否通过管道执行
+if [ -t 0 ]; then
+    # 从终端执行，正常流程
+    :
+else
+    # 通过管道执行，提示用户下载到本地
+    echo "========================================"
+    echo "检测到通过管道执行脚本"
+    echo "========================================"
+    echo ""
+    echo "建议下载脚本到本地再执行，以确保输入正常工作："
+    echo ""
+    echo "方法1: 下载并执行"
+    echo "wget https://raw.githubusercontent.com/24kbrother/nfs_and_qbit/main/install.sh"
+    echo "bash install.sh"
+    echo ""
+    echo "方法2: 克隆仓库"
+    echo "git clone https://github.com/24kbrother/nfs_and_qbit.git"
+    echo "cd nfs_and_qbit"
+    echo "bash install.sh"
+    echo ""
+    echo "是否继续通过管道执行？(y/N):"
+    read -p "" confirm
+    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+        echo "已取消执行"
+        exit 0
+    fi
+    echo "继续执行..."
+    echo ""
+fi
+
 # 固定配置
 GITHUB_REPO="24kbrother/nfs_and_qbit"
 GITHUB_BRANCH="main"
@@ -60,6 +91,7 @@ echo "示例: 192.168.1.100"
 read -p "NFS服务器IP: " nfs_server
 if [ -z "$nfs_server" ]; then
     echo "错误: NFS服务器IP地址不能为空"
+    echo "请重新运行脚本并输入正确的IP地址"
     exit 1
 fi
 
@@ -68,6 +100,7 @@ echo "示例: /volume1/Media"
 read -p "NFS路径: " nfs_path
 if [ -z "$nfs_path" ]; then
     echo "错误: NFS路径不能为空"
+    echo "请重新运行脚本并输入正确的路径"
     exit 1
 fi
 
