@@ -1,4 +1,4 @@
-# NFS挂载和qBittorrent自动启动服务
+# NFS挂载和qBittorrent自动启动服务,适用于飞牛挂载其他NAS
 
 这是一个自动化脚本集合，用于在Linux系统上自动挂载NFS存储并启动qBittorrent容器。
 
@@ -17,15 +17,15 @@
 
 ```bash
 # 下载安装脚本
-curl -fsSL https://raw.githubusercontent.com/your-username/chineseholiday/main/NFS挂载/install.sh | bash
+curl -fsSL https://github.com/24kbrother/nfs_and_qbit/blob/main/install.sh | bash
 ```
 
 ### 手动安装
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-username/chineseholiday.git
-cd chineseholiday/NFS挂载
+git clone https://github.com/24kbrother/nfs_and_qbit.git
+cd /tmp/nfs_and_qbit
 
 # 2. 运行安装脚本
 bash install.sh
@@ -163,4 +163,5 @@ MIT License
 - 初始版本
 - 支持NFS自动挂载
 - 支持qBittorrent自动启动
+
 - systemd服务集成 
